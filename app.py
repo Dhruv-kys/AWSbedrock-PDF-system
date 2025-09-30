@@ -11,7 +11,7 @@ from langchain.llms.bedrock import Bedrock
 import numpy as np
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFDirectoryLoader
-
+from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 from langchain.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA 
@@ -90,6 +90,7 @@ def main():
     st.header("Chat with PDFs using AWS Bedrock 🤖")
     
     user_question = st.text_input("Ask a Question from the PDF files")
+    output_container = st.container()
     
     with st.sidebar:
         st.title("Menu:")
@@ -108,7 +109,7 @@ def main():
                 allow_dangerous_deserialization=True
                 )
             llm = get_titan_llm()
-            
+            streamlit_callback = StreamlitCallbackHandler(output_container)
             st.write(get_response_llm(llm,faiss_index,user_question))
             st.success("Done")
     
